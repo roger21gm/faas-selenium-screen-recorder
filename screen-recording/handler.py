@@ -33,4 +33,6 @@ def handle(req):
     video_read = video.read()
     video_64_encode = base64.encodebytes(video_read)
 
+    os.remove('/videos/{}'.format(videoName))
+
     return video_64_encode.decode('utf-8')
