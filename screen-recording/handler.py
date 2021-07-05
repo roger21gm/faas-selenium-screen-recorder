@@ -1,27 +1,36 @@
-from selenium import webdriver
-from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+import time
+import signal
+import subprocess
 import os
+import sys
+import time
+from io import StringIO
+import string
+import random
+import base64
+from selenium import webdriver
+
 
 def handle(req):
     """handle a request to the function
     Args:
         req (str): request body
     """
-    
-    options = webdriver.ChromeOptions()
 
-    options.add_argument('--no-sandbox')
-    options.add_argument('--disable-dev-shm-usage')
+    videoName = ''.join(random.choices(string.ascii_uppercase + string.digits, k = 15)) + ".mp4"
 
-    proxy = os.getenv('proxy', '')
-    options.add_argument('--proxy-server=%s' % proxy)
+    record = subprocess.Popen(['/opt/bin/video.sh', videoName], stdin=subprocess.PIPE, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    time.sleep(2)
+    old_stdout = sys.stdout
+    redirected_output = sys.stdout = StringIO()
+    exec(req)
+    sys.stdout = old_stdout
+    time.sleep(2)
+    record.send_signal(signal.SIGINT)
+    record.wait()
 
-    driver = webdriver.Chrome(chrome_options=options)
-    
-    driver.get(req)
-    screenshot = driver.get_screenshot_as_base64()
-    
-    driver.close()
-    driver.quit()
+    video = open('/videos/{}'.format(videoName), 'rb')
+    video_read = video.read()
+    video_64_encode = base64.encodebytes(video_read)
 
-    return screenshot
+    return video_64_encode.decode('utf-8')

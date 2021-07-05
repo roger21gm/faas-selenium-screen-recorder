@@ -5,7 +5,7 @@ provider:
 functions:
   record: 
     handler: ./screen-recording
-    image: roger21gm/openfaas-selenium-record:1.0
+    image: roger21gm/openfaas-selenium-record:latest
     environment:
       proxy: ""
       image_width: "1920"

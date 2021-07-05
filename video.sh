@@ -1,7 +1,7 @@
 #!/bin/sh
 
 VIDEO_SIZE=${VIDEO_SIZE:-"1360x1020"}
-FILE_NAME=${FILE_NAME:-"video.mp4"}
+FILE_NAME=${1:-"video.mp4"}
 FRAME_RATE=${FRAME_RATE:-"15"}
 CODEC=${CODEC:-"libx264"}
 PRESET=${PRESET:-"-preset ultrafast"}
